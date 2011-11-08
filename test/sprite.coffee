@@ -1,6 +1,7 @@
 Sprite = require '../lib/sprite'
 Image = require '../lib/image'
-VerticalMapper = require '../lib/vertical_mapper'
+VerticalMapper = require('../lib/mapper').VerticalMapper
+HorizontalMapper = require('../lib/mapper').HorizontalMapper
 
 path = './test/images'
 

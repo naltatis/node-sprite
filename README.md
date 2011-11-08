@@ -1,8 +1,8 @@
-Status
+status
 ------
 in an experimental state, but I'm working on it ...
 
-Todos
+todos
 -----
 - stylus integration
 - cache-busting
