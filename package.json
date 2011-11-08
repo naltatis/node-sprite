@@ -15,7 +15,7 @@
   "devDependencies": {
     "expresso": "0.9.0"
   },
-  "main": "./index.coffee"
+  "main": "./index.coffee",
   "engines": {
     "node": "> 0.4.x"
   }
