@@ -1,5 +1,5 @@
 Sprite = require './lib/sprite'
-VerticalMapper = require './lib/vertical_mapper'
+mapper = require './lib/mapper'
 
 module.exports =
   create: (name, options, cb) ->
@@ -12,7 +12,7 @@ module.exports =
     padding = options.padding || 2
     path = options.path || './images'
       
-    mapper = new VerticalMapper padding
+    mapper = new mapper.VerticalMapper padding
     sprite = new Sprite name, path, mapper
     sprite.load (err) ->
       sprite.write (err) ->

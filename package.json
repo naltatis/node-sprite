@@ -13,7 +13,8 @@
     "seq": "0.3.5"
   },
   "devDependencies": {
-    "expresso": "0.9.0"
+    "expresso": "0.9.0",
+    "stylus": "0.19.2"
   },
   "main": "./index.coffee",
   "engines": {

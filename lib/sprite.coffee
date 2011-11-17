@@ -16,10 +16,13 @@ class Sprite
       @mapper.map @images
       cb err
       
+  url: ->
+    "#{@path}/#{@name}.png"
+      
   write: (cb) ->
     sprite = @_emptySprite()
     @_addImageData sprite, image for image in @images
-    sprite.savePng "#{@path}/#{@name}.png", 0, cb
+    sprite.savePng @url(), 0, cb
   
   image: (name) ->
     result = @images.filter (i) -> i.name == name
