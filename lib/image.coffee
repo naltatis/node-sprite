@@ -1,17 +1,16 @@
-gdlib = require "node-gd"
+im = require "imagemagick"
 
 class Image
   positionX: null
   positionY: null
-  data: null
   constructor: (@filename, @path) ->
     @name = @filename.replace /\.png$/, ''
   readDimensions: (cb) ->
-    path = "#{@path}/#{@filename}"
-    gdlib.openPng path, (err, img) =>
-      @data = img
+    im.identify @file(), (err, img) =>
       @width = img.width
       @height = img.height
-      cb err
+      cb(err)
+  file: ->
+    "#{@path}/#{@filename}"
 
 module.exports = Image

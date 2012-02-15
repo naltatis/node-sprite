@@ -1,5 +1,5 @@
 fs = require "fs"
-gdlib = require "node-gd"
+im = require "imagemagick"
 Seq = require "seq"
 pathlib = require 'path'
 
@@ -8,26 +8,43 @@ Image = require './image'
 class Sprite
   images = []
   
-  constructor: (@name, @path, @mapper) ->
+  constructor: (@name, @path, @mapper, @watch = false) ->
+
+  reload: ->
+    @_unwatch()
+    @load()
   
-  load: (cb) ->
+  load: (cb = ->) ->
     @_readImages (err, @images) =>
       @images = images
       @mapper.map @images
+      @_watch()
       cb err
-      
+
   url: ->
     "#{@path}/#{@name}.png"
       
   write: (cb) ->
-    sprite = @_emptySprite()
-    @_addImageData sprite, image for image in @images
-    sprite.savePng @url(), 0, cb
+    commands = @_emptySprite()
+    @_addImageData(commands, image) for image in @images
+    commands.push @url()
+    im.convert commands, cb
   
   image: (name) ->
     result = @images.filter (i) -> i.name == name
     result[0]
   
+  _watch: ->
+    return unless @watch
+    for image in @images
+      fs.watchFile image.file(), (cur, prev) =>
+        if cur? and prev? and cur.mtime.getTime() > prev.mtime.getTime()
+          @reload()
+  
+  _unwatch: ->
+    return unless @watch
+    fs.unwatchFile image.file() for image in @images
+
   _width: ->
     @mapper.width
   
@@ -35,24 +52,10 @@ class Sprite
     @mapper.height
 
   _emptySprite: ->
-    img = gdlib.createTrueColor @_width(), @_height()
-    transparent = img.colorAllocateAlpha 0, 0, 0, 127
-    img.fill 0, 0, transparent
-    img.colorTransparent transparent
-    img.alphaBlending 0
-    img.saveAlpha 1
-    img
+    ["-size", "#{@_width()}x#{@_height()}", "xc:skyblue"]
     
-  _addImageData: (sprite, image) ->
-    image.data.copy(
-      sprite
-      image.positionX # destX
-      image.positionY # destY
-      0 # srcX
-      0 # srcY
-      image.width
-      image.height
-    )
+  _addImageData: (commands, image) ->
+    commands.push image.file(), "-geometry", "+#{image.positionX}+#{image.positionY}", "-composite"
     
   _readImages: (cb) ->
     Seq()

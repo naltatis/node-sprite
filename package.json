@@ -9,7 +9,7 @@
   "dependencies" : {
     "coffee-script": "1.1.2",
     "underscore": "1.2.1",
-    "node-gd": "0.1.8",
+    "imagemagick": "0.1.2",
     "seq": "0.3.5"
   },
   "devDependencies": {
