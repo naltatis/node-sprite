@@ -1,7 +1,5 @@
 Sprite = require './lib/sprite'
 mapper = require './lib/mapper'
-stylus = require 'stylus'
-nodes = stylus.nodes
 fs = require 'fs'
 Seq = require "seq"
 
@@ -38,15 +36,24 @@ createSprites = (options = {}, cb = ->) ->
       cb null, sprites
 
 stylus = (options = {}, cb = ->) ->
+  stylus = require 'stylus'
+  nodes = stylus.nodes
   result = {}
-  helper = (name, image) ->
-    name = name.val
-    image = image.val
-    s = result[name]
-    return new nodes.String("missing sprite #{name}") if not s?
-    item = s.image image
-    return new nodes.String("missing image #{image} in sprite #{name}") if not item?
-    new nodes.String("background: url(#{s.url()}) #{item.positionX}px #{item.positionY}px")
+  helper = (name, image, dimensions) ->
+    name = name.string
+    image = image.string
+    dimensions = if dimensions then dimensions.val else true
+    sprite = result[name]
+    throw new Error("missing sprite #{name}") if not sprite?
+    item = sprite.image image
+    throw new Error("missing image #{image} in sprite #{name}") if not item?
+
+    if dimensions
+      width = new nodes.Property ["width"], "#{item.width}px"
+      height = new nodes.Property ["height"], "#{item.height}px"
+      @closestBlock.nodes.splice @closestBlock.index+1, 0, width, height
+
+    new nodes.Property ["background"], "url(#{sprite.url()}) #{item.positionX}px #{item.positionY}px"
 
   createSprites options, (err, sprites) ->
     result[s.name] = s for s in sprites
