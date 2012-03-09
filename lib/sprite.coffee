@@ -2,17 +2,18 @@ fs = require "fs"
 im = require "imagemagick"
 Seq = require "seq"
 pathlib = require 'path'
+{ EventEmitter } = require "events"
 
 Image = require './image'
 
-class Sprite
+class Sprite extends EventEmitter
   images = []
   
   constructor: (@name, @path, @mapper, @watch = false) ->
 
   reload: ->
     @_unwatch()
-    @load()
+    @load => @emit "update"
   
   load: (cb = ->) ->
     @_readImages (err, @images) =>
@@ -52,7 +53,7 @@ class Sprite
     @mapper.height
 
   _emptySprite: ->
-    ["-size", "#{@_width()}x#{@_height()}", "xc:skyblue"]
+    ["-size", "#{@_width()}x#{@_height()}", "xc:none"]
     
   _addImageData: (commands, image) ->
     commands.push image.file(), "-geometry", "+#{image.positionX}+#{image.positionY}", "-composite"
@@ -70,7 +71,7 @@ class Sprite
   
   _getFiles: (cb) ->
     fs.readdir "#{@path}/#{@name}", (err, files) ->
-      files = files.filter (file) -> file.match /\.png$/
+      files = files.filter (file) -> file.match /\.(png|gif|jpg|jpeg)$/
       cb err, files
 
   _getImage: (filename, cb) ->

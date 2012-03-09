@@ -12,9 +12,11 @@ stylus(str)
 
 ###
 
-sprite.stylus {path: "./images"}, (err, stylusSprite) ->
-  stylus(str)
-    .set('filename', __dirname + '/sprite.styl')
-    .define('sprite', stylusSprite)
-    .render (err, css) ->
-      console.log css
+sprite.stylus {path: "./images", watch: true }, (err, helper) ->
+  output = ->
+    stylus(str)
+      .set('filename', __dirname + '/sprite.styl')
+      .define('sprite', helper.fn)
+      .render (err, css) -> console.log css
+  output()
+  helper.on "update", output

@@ -2,6 +2,7 @@ Sprite = require './lib/sprite'
 mapper = require './lib/mapper'
 fs = require 'fs'
 Seq = require "seq"
+{ EventEmitter } = require "events"
 
 createSprite = (name, options = {}, cb = ->) ->
   options or= {}
@@ -12,12 +13,13 @@ createSprite = (name, options = {}, cb = ->) ->
     
   padding = options.padding || 2
   path = options.path || './images'
-  
+
   map = new mapper.VerticalMapper padding
   sprite = new Sprite name, path, map, options.watch
   sprite.load (err) ->
     sprite.write (err) ->
       cb err, sprite
+  sprite
 
 createSprites = (options = {}, cb = ->) ->
   path = options.path || './images'
@@ -39,7 +41,8 @@ stylus = (options = {}, cb = ->) ->
   stylus = require 'stylus'
   nodes = stylus.nodes
   result = {}
-  helper = (name, image, dimensions) ->
+  helper = new EventEmitter()
+  helper.fn = (name, image, dimensions) ->
     name = name.string
     image = image.string
     dimensions = if dimensions then dimensions.val else true
@@ -56,7 +59,10 @@ stylus = (options = {}, cb = ->) ->
     new nodes.Property ["background"], "url(#{sprite.url()}) #{item.positionX}px #{item.positionY}px"
 
   createSprites options, (err, sprites) ->
-    result[s.name] = s for s in sprites
+    for s in sprites
+      result[s.name] = s
+      s.on "update", ->
+        helper.emit "update", s.name
     cb err, helper
   helper
 
