@@ -1,5 +1,6 @@
 fs = require "fs"
 im = require "imagemagick"
+watch = require 'watch'
 Seq = require "seq"
 pathlib = require 'path'
 { EventEmitter } = require "events"
@@ -12,8 +13,10 @@ class Sprite extends EventEmitter
   constructor: (@name, @path, @mapper, @watch = false) ->
 
   reload: ->
-    @_unwatch()
-    @load => @emit "update"
+    @_readImages (err, @images) =>
+      @images = images
+      @mapper.map @images
+      @emit "update"
   
   load: (cb = ->) ->
     @_readImages (err, @images) =>
@@ -37,14 +40,10 @@ class Sprite extends EventEmitter
   
   _watch: ->
     return unless @watch
-    for image in @images
-      fs.watchFile image.file(), (cur, prev) =>
-        if cur? and prev? and cur.mtime.getTime() > prev.mtime.getTime()
-          @reload()
-  
-  _unwatch: ->
-    return unless @watch
-    fs.unwatchFile image.file() for image in @images
+    watch.createMonitor "#{@path}/#{@name}/", interval: 500, (m) =>
+      m.on "created", => @reload()
+      m.on "changed", => @reload()
+      m.on "removed", => @reload()
 
   _width: ->
     @mapper.width
