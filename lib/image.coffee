@@ -7,7 +7,6 @@ class Image
     @name = @filename.replace /\.(png|gif|jpg|jpeg)$/, ''
   readDimensions: (cb) ->
     im.identify @file(), (err, img) =>
-      console.log err, img
       @width = img.width
       @height = img.height
       cb(err)
