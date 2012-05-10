@@ -4,9 +4,10 @@ class Image
   positionX: null
   positionY: null
   constructor: (@filename, @path) ->
-    @name = @filename.replace /\.png$/, ''
+    @name = @filename.replace /\.(png|gif|jpg|jpeg)$/, ''
   readDimensions: (cb) ->
     im.identify @file(), (err, img) =>
+      console.log err, img
       @width = img.width
       @height = img.height
       cb(err)
