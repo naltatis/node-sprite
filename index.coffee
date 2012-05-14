@@ -58,7 +58,7 @@ stylus = (options = {}, cb = ->) ->
 
     httpUrl = (options.httpPath || options.path) + "/" + sprite.filename()
 
-    new nodes.Property ["background"], "url('#{httpUrl}') #{item.positionX}px #{item.positionY}px"
+    new nodes.Property ["background"], "url('#{httpUrl}') #{item.positionX * -1}px #{item.positionY * -1}px"
 
   createSprites options, (err, sprites) ->
     for s in sprites
