@@ -26,7 +26,10 @@ class Sprite extends EventEmitter
       cb err
 
   url: ->
-    "#{@path}/#{@name}.png"
+    "#{@path}/#{@filename()}"
+
+  filename: ->
+    "#{@name}.png"
       
   write: (cb) ->
     commands = @_emptySprite()
