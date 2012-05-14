@@ -56,7 +56,7 @@ stylus = (options = {}, cb = ->) ->
       height = new nodes.Property ["height"], "#{item.height}px"
       @closestBlock.nodes.splice @closestBlock.index+1, 0, width, height
 
-    httpUrl = (options.httpPath || options.path) + sprite.filename()
+    httpUrl = (options.httpPath || options.path) + "/" + sprite.filename()
 
     new nodes.Property ["background"], "url(#{httpUrl}) #{item.positionX}px #{item.positionY}px"
 
