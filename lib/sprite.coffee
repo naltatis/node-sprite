@@ -3,6 +3,7 @@ im = require "imagemagick"
 watch = require 'watch'
 Seq = require "seq"
 pathlib = require 'path'
+checksum = require './checksum'
 { EventEmitter } = require "events"
 
 Image = require './image'
@@ -13,33 +14,56 @@ class Sprite extends EventEmitter
   constructor: (@name, @path, @mapper, @watch = false) ->
 
   reload: ->
-    @_readImages (err, @images) =>
-      @images = images
-      @mapper.map @images
-      @emit "update"
+    @_readImages (err, images) =>
+      unless err
+        @images = images
+        @mapper.map @images
+        @emit "update"
   
   load: (cb = ->) ->
-    @_readImages (err, @images) =>
-      @images = images
-      @mapper.map @images
-      @_watch()
+    @_fromJson()
+    @_readImages (err, images) =>
+      unless err
+        @images = images
+        @mapper.map @images
+        @_watch()
       cb err
 
   url: ->
     "#{@path}/#{@filename()}"
 
+  jsonUrl: ->
+    "#{@path}/#{@name}.json"
+
   filename: ->
-    "#{@name}.png"
+    "#{@name}-#{@shortsum()}.png"
       
   write: (cb) ->
+    pathlib.exists @url(), (exists) =>
+      if exists
+        cb()
+      else
+        @_write cb
+
+  _write: (cb) ->
     commands = @_emptySprite()
     @_addImageData(commands, image) for image in @images
     commands.push @url()
-    im.convert commands, cb
+    im.convert commands, (err) =>
+      @_toJson()
+      @_cleanup()
+      cb err
   
   image: (name) ->
     result = @images.filter (i) -> i.name == name
     result[0]
+
+  checksum: ->
+    sums = (img.checksum for img in @images)
+    checksum.array sums
+
+  shortsum: ->
+    @checksum()[0...5]
   
   _watch: ->
     return unless @watch
@@ -69,16 +93,70 @@ class Sprite extends EventEmitter
         @_getImage filename, next
       .unflatten()
       .seq_ (next, images) =>
-        cb null, images
+        # workaround for https://github.com/substack/node-seq/issues/22
+        error = null
+        for image in images
+          error = new Error("unable to read all images") unless image?
+        cb error, images
   
   _getFiles: (cb) ->
     fs.readdir "#{@path}/#{@name}", (err, files) ->
       files = files.filter (file) -> file.match /\.(png|gif|jpg|jpeg)$/
       cb err, files
 
+  _cleanup: (cb = ->) ->
+    self = @
+    fs.readdir "#{@path}", (err, files) ->
+      for file in files
+        if file.match("^#{self.name}-.*\.png$") and file isnt self.filename()
+          fs.unlinkSync "#{self.path}/#{file}"
+      cb()
+
   _getImage: (filename, cb) ->
     image = new Image(filename, "#{@path}/#{@name}")
     image.readDimensions (err) ->
-      cb null, image
+      # workaround for https://github.com/substack/node-seq/issues/22
+      if err
+        cb()
+      else
+        cb null, image
+
+  _toJson: ->
+    info = 
+      name: @name
+      checksum: @checksum()
+      shortsum: @shortsum()
+      images: []
+
+    for image in @images
+      imageInfo =
+        name: image.name
+        filename: image.filename
+        checksum: image.checksum
+        width: image.width
+        height: image.height
+        positionX: image.positionX
+        positionY: image.positionY
+      info.images.push imageInfo
+
+    info = JSON.stringify(info, null, '  ')
+    fs.writeFileSync @jsonUrl(), info
+
+  _fromJson: ->
+    try
+      info = fs.readFileSync @jsonUrl(), "UTF-8"
+    catch error
+      return # no json file
+
+    info = JSON.parse info
+    @images = []
+    for img in info.images
+      image = new Image(img.filename, "#{@path}/#{@name}")
+      image.width = img.width
+      image.height = img.height
+      image.checksum = img.checksum
+      image.positionX = img.positionX
+      image.positionY = img.positionY
+      @images.push image 
 
 module.exports = Sprite

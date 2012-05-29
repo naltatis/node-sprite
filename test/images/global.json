@@ -1,0 +1,79 @@
+{
+  "name": "global",
+  "checksum": "9c4b4e0936a9979d24c62c9da418de11",
+  "shortsum": "9c4b4",
+  "images": [
+    {
+      "name": "100x100",
+      "filename": "100x100.png",
+      "checksum": "030b1ee4dc90262d0c7359ccd8264111",
+      "width": 100,
+      "height": 100,
+      "positionX": 0,
+      "positionY": 0
+    },
+    {
+      "name": "100x300",
+      "filename": "100x300.png",
+      "checksum": "4a930265ea1cab7bc075cece7aa24e27",
+      "width": 100,
+      "height": 300,
+      "positionX": 0,
+      "positionY": 110
+    },
+    {
+      "name": "200x200",
+      "filename": "200x200.png",
+      "checksum": "dde51aea929d0b9abe9709669ddc1d8d",
+      "width": 200,
+      "height": 200,
+      "positionX": 0,
+      "positionY": 420
+    },
+    {
+      "name": "250x300",
+      "filename": "250x300.png",
+      "checksum": "49035f742d9c6d81b3c3ccdc0fd48d65",
+      "width": 250,
+      "height": 300,
+      "positionX": 0,
+      "positionY": 630
+    },
+    {
+      "name": "350x150",
+      "filename": "350x150.png",
+      "checksum": "778dd2d0ef6e4d1016bf4c43ad1d0da3",
+      "width": 350,
+      "height": 150,
+      "positionX": 0,
+      "positionY": 940
+    },
+    {
+      "name": "50x100",
+      "filename": "50x100.png",
+      "checksum": "e5f0b0f339c67bfefce15a1d246d1348",
+      "width": 50,
+      "height": 100,
+      "positionX": 0,
+      "positionY": 1100
+    },
+    {
+      "name": "50x50",
+      "filename": "50x50.png",
+      "checksum": "440d860c56203909f65244e224877b53",
+      "width": 50,
+      "height": 50,
+      "positionX": 0,
+      "positionY": 1210
+    },
+    {
+      "name": "800x50",
+      "filename": "800x50.png",
+      "checksum": "ab5ffea69bae3ab20106425c44a9cab4",
+      "width": 800,
+      "height": 50,
+      "positionX": 0,
+      "positionY": 1270
+    }
+  ]
+}

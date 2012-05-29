@@ -25,3 +25,7 @@ module.exports =
       assert.equal 0, sprite.image('100x300').positionX
       assert.equal 110, sprite.image('100x300').positionY
       assert.isUndefined sprite.image('350x151')
+  testImageChecksums: (beforeExit, assert) ->
+    sprite = new Sprite 'global', path, mapper
+    sprite.load ->
+      assert.equal "9c4b4e0936a9979d24c62c9da418de11", sprite.checksum()
