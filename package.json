@@ -1,6 +1,6 @@
 {
   "name": "node-sprite",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "naltatis",
   "repository": {
     "type": "git",
@@ -19,6 +19,6 @@
   },
   "main": "./index.coffee",
   "engines": {
-    "node": "> 0.4.x"
+    "node": "> 0.8.x"
   }
 }
