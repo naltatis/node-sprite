@@ -2,6 +2,7 @@
   "name": "node-sprite",
   "version": "0.0.16",
   "author": "naltatis",
+  "keywords": ["css", "sprite", "sprites", "stylus", "retina", "images"],
   "repository": {
     "type": "git",
     "url" : "git://github.com/naltatis/node-sprite.git"
