@@ -170,7 +170,7 @@ This will generate the following css code:
 }
 ```
 
-*Note: Alle images in the retina folder should have **even** height and width pixels.*
+*Note: All images in the retina folder should have even height and width pixels.*
 
 ## Options
 
