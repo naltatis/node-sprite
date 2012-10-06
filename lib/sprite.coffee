@@ -1,6 +1,6 @@
 fs = require "fs"
 im = require "imagemagick"
-Watch = require('fs-watcher').watch
+watch = require 'watch'
 Seq = require "seq"
 checksum = require './checksum'
 { EventEmitter } = require "events"
@@ -9,19 +9,16 @@ Image = require './image'
 
 class Sprite extends EventEmitter
   images = []
-  
+
   constructor: (@name, @path, @mapper, @watch = false) ->
 
   reload: ->
-    console.log "read start"
     @_readImages (err, images) =>
-      console.log "read done"
-      return
       unless err
         @images = images
         @mapper.map @images
         @emit "update"
-  
+
   load: (cb = ->) ->
     @_fromJson()
     @_readImages (err, images) =>
@@ -39,7 +36,7 @@ class Sprite extends EventEmitter
 
   filename: ->
     "#{@name}-#{@shortsum()}.png"
-      
+
   write: (cb) ->
     fs.exists @url(), (exists) =>
       if exists
@@ -55,7 +52,7 @@ class Sprite extends EventEmitter
       @_toJson()
       @_cleanup()
       cb err
-  
+
   image: (name) ->
     result = @images.filter (i) -> i.name == name
     result[0]
@@ -66,27 +63,26 @@ class Sprite extends EventEmitter
 
   shortsum: ->
     @checksum()[0...5]
-  
+
   _watch: ->
     return unless @watch
-    return if @_watcher?
-    @_watcher = new Watch(root: "#{@path}/#{@name}")
-    @_watcher.on "create", (o) => @reload()
-    @_watcher.on "change", (o) => @reload()
-    @_watcher.start();
+    watch.createMonitor "#{@path}/#{@name}/", interval: 500, (m) =>
+      m.on "created", => @reload()
+      m.on "changed", => @reload()
+      m.on "removed", => @reload()
 
   _width: ->
     @mapper.width
-  
+
   _height: ->
     @mapper.height
 
   _emptySprite: ->
     ["-size", "#{@_width()}x#{@_height()}", "xc:none"]
-    
+
   _addImageData: (commands, image) ->
     commands.push image.file(), "-geometry", "+#{image.positionX}+#{image.positionY}", "-composite"
-    
+
   _readImages: (cb) ->
     Seq()
       .seq_ (next) =>
@@ -101,7 +97,7 @@ class Sprite extends EventEmitter
         for image in images
           error = new Error("unable to read all images") unless image?
         cb error, images
-  
+
   _getFiles: (cb) ->
     fs.readdir "#{@path}/#{@name}", (err, files) ->
       files = files.filter (file) -> file.match /\.(png|gif|jpg|jpeg)$/
@@ -125,7 +121,7 @@ class Sprite extends EventEmitter
         cb null, image
 
   _toJson: ->
-    info = 
+    info =
       name: @name
       checksum: @checksum()
       shortsum: @shortsum()
@@ -160,6 +156,6 @@ class Sprite extends EventEmitter
       image.checksum = img.checksum
       image.positionX = img.positionX
       image.positionY = img.positionY
-      @images.push image 
+      @images.push image
 
 module.exports = Sprite

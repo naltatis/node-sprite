@@ -20,3 +20,4 @@ sprite.stylus {path: "./images", watch: true }, (err, helper) ->
       .render (err, css) -> console.log css
   output()
   helper.on "update", output
+  console.log "watching for file changes in './images' ..."

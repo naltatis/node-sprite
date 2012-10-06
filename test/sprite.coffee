@@ -11,7 +11,7 @@ module.exports =
   testSpriteLoading: (beforeExit, assert) ->
     sprite = new Sprite 'global', path, mapper
     sprite.load ->
-      assert.equal 8, sprite.images.length 
+      assert.equal 8, sprite.images.length
   testWritingOutput: (beforeExit, assert) ->
     sprite = new Sprite 'global', path, mapper
     sprite.load ->
