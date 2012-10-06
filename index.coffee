@@ -6,11 +6,11 @@ Seq = require "seq"
 
 createSprite = (name, options = {}, cb = ->) ->
   options or= {}
-  
+
   if typeof options is 'function'
     cb = options
     options = {}
-    
+
   padding = options.padding || 2
   path = options.path || './images'
 
@@ -22,24 +22,31 @@ createSprite = (name, options = {}, cb = ->) ->
   sprite
 
 createSprites = (options = {}, cb = ->) ->
+  if typeof options is 'function'
+    cb = options
+    options = {}
+
   path = options.path || './images'
 
   Seq()
-    .seq -> 
+    .seq ->
       fs.readdir path, @
     .flatten()
     .parFilter (dir) ->
       fs.stat "#{path}/#{dir}", (err, stat) =>
-        @ err, stat.isDirectory()        
+        @ err, stat.isDirectory()
     .parMap (dir) ->
       createSprite dir, options, @
     .unflatten()
     .seq (sprites) ->
-      cb null, sprites
+      result = {}
+      result[s.name] = s for s in sprites
+      cb null, result
 
 stylus = (options = {}, cb = ->) ->
   stylus = require 'stylus'
   nodes = stylus.nodes
+  retinaMatcher = new RegExp((options.retina || "-2x") + "$")
   result = {}
   helper = new EventEmitter()
   helper.fn = (name, image, dimensions) ->
@@ -56,7 +63,7 @@ stylus = (options = {}, cb = ->) ->
     positionX = item.positionX * -1
     positionY = item.positionY * -1
 
-    if name.match(/-2x$/)
+    if name.match(retinaMatcher)
       width = width / 2
       height = height / 2
       positionX = positionX / 2
@@ -82,17 +89,17 @@ stylus = (options = {}, cb = ->) ->
     width = sprite._width()
     height = sprite._height()
 
-    if name.match(/-2x$/)
+    if name.match(retinaMatcher)
       width = width / 2
       height = height / 2
 
     return new nodes.Unit "#{width}px #{height}px"
 
   createSprites options, (err, sprites) ->
-    for s in sprites
-      result[s.name] = s
+    for name, s in sprites
       s.on "update", ->
-        helper.emit "update", s.name
+        helper.emit "update", name
+    result = sprites
     cb err, helper
   helper
 

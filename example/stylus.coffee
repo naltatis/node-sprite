@@ -17,7 +17,9 @@ sprite.stylus {path: "./images", watch: true }, (err, helper) ->
     stylus(str)
       .set('filename', __dirname + '/sprite.styl')
       .define('sprite', helper.fn)
-      .render (err, css) -> console.log css
+      .render (err, css) ->
+        console.log err if err
+        console.log css
   output()
   helper.on "update", output
   console.log "watching for file changes in './images' ..."
