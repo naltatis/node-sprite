@@ -1,8 +1,7 @@
 fs = require "fs"
 im = require "imagemagick"
-watch = require 'watch'
+Watch = require('fs-watcher').watch
 Seq = require "seq"
-pathlib = require 'path'
 checksum = require './checksum'
 { EventEmitter } = require "events"
 
@@ -14,7 +13,10 @@ class Sprite extends EventEmitter
   constructor: (@name, @path, @mapper, @watch = false) ->
 
   reload: ->
+    console.log "read start"
     @_readImages (err, images) =>
+      console.log "read done"
+      return
       unless err
         @images = images
         @mapper.map @images
@@ -39,7 +41,7 @@ class Sprite extends EventEmitter
     "#{@name}-#{@shortsum()}.png"
       
   write: (cb) ->
-    pathlib.exists @url(), (exists) =>
+    fs.exists @url(), (exists) =>
       if exists
         cb()
       else
@@ -67,10 +69,11 @@ class Sprite extends EventEmitter
   
   _watch: ->
     return unless @watch
-    watch.createMonitor "#{@path}/#{@name}/", interval: 500, (m) =>
-      m.on "created", => @reload()
-      m.on "changed", => @reload()
-      m.on "removed", => @reload()
+    return if @_watcher?
+    @_watcher = new Watch(root: "#{@path}/#{@name}")
+    @_watcher.on "create", (o) => @reload()
+    @_watcher.on "change", (o) => @reload()
+    @_watcher.start();
 
   _width: ->
     @mapper.width
@@ -86,7 +89,7 @@ class Sprite extends EventEmitter
     
   _readImages: (cb) ->
     Seq()
-      .seq_ (next) => 
+      .seq_ (next) =>
         @_getFiles next
       .flatten()
       .parMap_ (next, filename) =>
