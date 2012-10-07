@@ -21,7 +21,7 @@
   "scripts": {
     "test": "expresso test/*"
   },
-  "main": "./index.coffee",
+  "main": "./index.js",
   "engines": {
     "node": "> 0.8.x"
   }
