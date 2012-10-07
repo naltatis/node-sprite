@@ -20,10 +20,10 @@ module.exports =
   testImageInfo: (beforeExit, assert) ->
     sprite = new Sprite 'global', path, mapper
     sprite.load ->
-      assert.equal 50, sprite.image('50x50').width
-      assert.equal 150, sprite.image('350x150').height
-      assert.equal 0, sprite.image('100x300').positionX
-      assert.equal 110, sprite.image('100x300').positionY
+      assert.equal 100, sprite.image('100x300').width
+      assert.equal 300, sprite.image('100x300').height
+      assert.equal 0, sprite.image('200x200').positionX
+      assert.equal 310, sprite.image('200x200').positionY
       assert.isUndefined sprite.image('350x151')
   testImageChecksums: (beforeExit, assert) ->
     sprite = new Sprite 'global', path, mapper
