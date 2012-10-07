@@ -1,14 +1,13 @@
 [![Build Status](https://secure.travis-ci.org/naltatis/node-sprite.png)](http://travis-ci.org/naltatis/node-sprite)
 
-# node-sprite
-A CSS Sprite Generation Library with Stylus and Retina Support.
+# A node.js Sprite Library with Stylus and Retina Support
 
 ## Requirements
-It uses **ImageMagick** for its graphics operations. So make sure you have the `convert` and `identify` command available in your envirnoment.
+`node-sprite` uses **ImageMagick** for its graphics operations. So make sure you have the `convert` and `identify` command available in your envirnoment.
 
 ## Usage
 
-`node-sprite` exports three functions: `sprite`, `sprites` and `stylus`. The following examples show how to use them.
+There a three exported functions: `sprite`, `sprites` and `stylus`. The following examples show how to use them.
 
 ### Example Directory Stucture
 
@@ -228,6 +227,12 @@ They are also usefull if you running your application on a production machine wi
   ]
 }
 ```
+
+## Contribute
+
+Feel free to post issues or pull request.
+
+You can run the projects tests with the `npm test` command.
 
 ## License
 The MIT License
