@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/naltatis/node-sprite.png)](http://travis-ci.org/naltatis/node-sprite)
+
 # node-sprite
 A CSS Sprite Generation Library with Stylus and Retina Support.
 
