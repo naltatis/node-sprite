@@ -84,14 +84,16 @@ class Sprite extends EventEmitter
     commands.push image.file(), "-geometry", "+#{image.positionX}+#{image.positionY}", "-composite"
 
   _readImages: (cb) ->
+    self = @
+    limit = 10
     Seq()
-      .seq_ (next) =>
-        @_getFiles next
+      .seq_ ->
+        self._getFiles @
       .flatten()
-      .parMap_ (next, filename) =>
-        @_getImage filename, next
+      .parMap limit, (filename) ->
+        self._getImage filename, @
       .unflatten()
-      .seq_ (next, images) =>
+      .seq (images) =>
         # workaround for https://github.com/substack/node-seq/issues/22
         error = null
         for image in images
@@ -142,13 +144,15 @@ class Sprite extends EventEmitter
     fs.writeFileSync @jsonUrl(), info
 
   _fromJson: ->
+    @images = []
+
     try
       info = fs.readFileSync @jsonUrl(), "UTF-8"
     catch error
+      console.log @jsonUrl() + " not found"
       return # no json file
 
     info = JSON.parse info
-    @images = []
     for img in info.images
       image = new Image(img.filename, "#{@path}/#{@name}")
       image.width = img.width
@@ -157,5 +161,7 @@ class Sprite extends EventEmitter
       image.positionX = img.positionX
       image.positionY = img.positionY
       @images.push image
+
+    @mapper.map @images
 
 module.exports = Sprite
