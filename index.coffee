@@ -46,7 +46,7 @@ createSprites = (options = {}, cb = ->) ->
 stylus = (options = {}, cb = ->) ->
   stylus = require 'stylus'
   nodes = stylus.nodes
-  retinaMatcher = new RegExp((options.retina || "-2x") + "$")
+  retinaMatcher = new RegExp((options.retina || "2x") + "$")
   result = {}
   helper = new EventEmitter()
   helper.fn = (name, image, dimensions) ->
@@ -96,7 +96,7 @@ stylus = (options = {}, cb = ->) ->
     return new nodes.Unit "#{width}px #{height}px"
 
   createSprites options, (err, sprites) ->
-    for name, s in sprites
+    for name, s of sprites
       s.on "update", ->
         helper.emit "update", name
     result = sprites

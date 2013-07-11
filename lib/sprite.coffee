@@ -17,7 +17,8 @@ class Sprite extends EventEmitter
       unless err
         @images = images
         @mapper.map @images
-        @emit "update"
+        @write =>
+          @emit "update"
 
   load: (cb = ->) ->
     @_fromJson()

@@ -105,11 +105,11 @@ sprite.stylus({path: './images'}, function (err, helper) {
 
 ## Retina / High Resolution Sprite Support
 
-node-sprite has a special mode for high resolution sprites. When your sprite folder ends with `-2x` it will be treated differently.
+node-sprite has a special mode for high resolution sprites. When your sprite folder ends with `@2x` it will be treated differently.
 
 ### Basic Example
 
-    animals-2x/
+    animals@2x/
     - cat.gif    // 128x128px image
     - duck.png   // 128x128px image
 
@@ -118,8 +118,8 @@ Although we have 128x128px images. The elements should only have the size of 64x
 ```
 // screen.styl
 #duck
-  sprite(animal-2x, duck)
-  background-size sprite-dimensions(animal-2x, name)
+  sprite(animal@2x, duck)
+  background-size sprite-dimensions(animal@2x, name)
 ```
 
 will be transformed to
@@ -127,7 +127,7 @@ will be transformed to
 ```css
 /* screen.css */
 #duck {
-  background: url('./images/animals-2x-c575d.png') 0px -66px;
+  background: url('./images/animals@2x-c575d.png') 0px -66px;
   width: 64px;
   height: 64px;
   background-size: 64px 194px;
@@ -148,8 +148,8 @@ retina-sprite(folder, name)
   sprite(folder, name)
   hidpi = s("(min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 1.5dppx)");
   @media hidpi
-    sprite(folder+"-2x", name, false)
-    background-size sprite-dimensions(folder+"-2x", name)
+    sprite(folder+"@2x", name, false)
+    background-size sprite-dimensions(folder+"@2x", name)
 
 #duck
   retina-sprite animals duck
@@ -165,7 +165,7 @@ This will generate the following css code:
 }
 @media (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 1.5dppx) {
   #duck {
-    background: url('./images/animals-2x-c575d.png') 0px -66px;
+    background: url('./images/animals@2x-c575d.png') 0px -66px;
     background-size: 64px 194px;
   }
 }
@@ -183,7 +183,7 @@ All three functions accept an optional options parameter.
   padding: 2,           // pixels between images
   httpPath: './images', // used be the stylus helper
   watch: false,         // auto update sprite in background
-  retina: '-2x'         // postfix for retina sprite folders
+  retina: '@2x'         // postfix for retina sprite folders
 }
 ```
 
