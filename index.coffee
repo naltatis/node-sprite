@@ -13,9 +13,10 @@ createSprite = (name, options = {}, cb = ->) ->
 
   padding = options.padding || 2
   path = options.path || './images'
+  dest = options.dest || null
 
   map = new mapper.VerticalMapper padding
-  sprite = new Sprite name, path, map, options.watch
+  sprite = new Sprite name, path, dest, map, options.watch
   sprite.load (err) ->
     sprite.write (err) ->
       cb err, sprite
@@ -27,6 +28,7 @@ createSprites = (options = {}, cb = ->) ->
     options = {}
 
   path = options.path || './images'
+  dest = options.dest || null
 
   Seq()
     .seq ->

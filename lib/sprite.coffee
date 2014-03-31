@@ -10,7 +10,7 @@ Image = require './image'
 class Sprite extends EventEmitter
   images = []
 
-  constructor: (@name, @path, @mapper, @watch = false) ->
+  constructor: (@name, @path, @dest, @mapper, @watch = false) ->
 
   reload: ->
     @_readImages (err, images) =>
@@ -30,10 +30,10 @@ class Sprite extends EventEmitter
       cb err
 
   url: ->
-    "#{@path}/#{@filename()}"
+    if @dest then "#{@dest}/#{@filename()}" else "#{@path}/#{@filename()}"
 
   jsonUrl: ->
-    "#{@path}/#{@name}.json"
+    if @dest then "#{@dest}/#{@name}.json" else "#{@path}/#{@name}.json"
 
   filename: ->
     "#{@name}-#{@shortsum()}.png"
