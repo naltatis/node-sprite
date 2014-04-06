@@ -21,7 +21,7 @@ class Sprite extends EventEmitter
           @emit "update"
 
   load: (cb = ->) ->
-    @_fromJson()
+    return cb(null) if true is @_fromJson()
     @_readImages (err, images) =>
       unless err
         @images = images
@@ -151,7 +151,7 @@ class Sprite extends EventEmitter
       info = fs.readFileSync @jsonUrl(), "UTF-8"
     catch error
       console.log @jsonUrl() + " not found"
-      return # no json file
+      return false # no json file
 
     info = JSON.parse info
     for img in info.images
@@ -164,5 +164,6 @@ class Sprite extends EventEmitter
       @images.push image
 
     @mapper.map @images
+    return true
 
 module.exports = Sprite
