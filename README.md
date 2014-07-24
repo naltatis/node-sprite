@@ -7,7 +7,7 @@
 
 ## Usage
 
-There a three exported functions: `sprite`, `sprites` and `stylus`. The following examples show how to use them.
+There are three exported functions: `sprite`, `sprites` and `stylus`. The following examples show how to use them.
 
 ### Example Directory Stucture
 
